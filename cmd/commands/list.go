@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/csyezheng/a2fa/internal/database"
+	"github.com/csyezheng/a2fa/internal/initialize"
 	"log"
 	"log/slog"
 )
@@ -40,6 +41,7 @@ func (c *listCommand) PreRun(cd, runner *Commandeer) error {
 }
 
 func (c *listCommand) Run(ctx context.Context, cd *Commandeer, args []string) error {
+	initialize.Init()
 	if err := c.listAccounts(args); err != nil {
 		log.Fatal(err)
 	}

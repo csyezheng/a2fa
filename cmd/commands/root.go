@@ -3,9 +3,12 @@ package commands
 import (
 	"context"
 	"fmt"
+	"github.com/csyezheng/a2fa/internal/initialize"
 	"github.com/spf13/cobra"
 	"io"
 	"log"
+	"log/slog"
+	"os"
 )
 
 type rootCommand struct {
@@ -32,7 +35,11 @@ func (r *rootCommand) Init(cd *Commandeer) error {
 	cmd := cd.CobraCommand
 	cmd.Use = "a2fa [flags]"
 	cmd.Short = "a2fa generate OTP"
-	cmd.Long = "a2fa generate OTP"
+	cmd.Long = `
+a2fa is a command line tool for generating and validating one-time password.
+
+See the home page (https://github.com/csyezheng/a2fa/) for more usage.
+`
 	return nil
 }
 
@@ -45,8 +52,8 @@ func (r *rootCommand) PreRun(cd, runner *Commandeer) error {
 }
 
 func (r *rootCommand) Run(ctx context.Context, cd *Commandeer, args []string) error {
-	listCmd := newListCommand()
-	return listCmd.Run(ctx, cd, args)
+	slog.Debug(fmt.Sprintf("a2fa version %q finishing with parameters %q", initialize.Version, os.Args))
+	return cd.CobraCommand.Usage()
 }
 
 func (r *rootCommand) Commands() []Commander {

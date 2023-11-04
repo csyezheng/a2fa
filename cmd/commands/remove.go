@@ -3,6 +3,7 @@ package commands
 import (
 	"context"
 	"github.com/csyezheng/a2fa/internal/database"
+	"github.com/csyezheng/a2fa/internal/initialize"
 	"github.com/spf13/cobra"
 	"log"
 	"log/slog"
@@ -44,6 +45,7 @@ func (c *removeCommand) PreRun(cd, runner *Commandeer) error {
 }
 
 func (c *removeCommand) Run(ctx context.Context, cd *Commandeer, args []string) error {
+	initialize.Init()
 	if err := cobra.MinimumNArgs(1)(cd.CobraCommand, args); err != nil {
 		return err
 	}
