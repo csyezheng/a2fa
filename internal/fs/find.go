@@ -51,8 +51,8 @@ func findXDGConfig(filename string) (dir string, filePath string) {
 }
 
 // findHomeDir find current user's home directory
-// ~/.config/a2fa/<filename> or ~/<filename>
-func findHomeDir(filename string) (dir string, filePath string) {
+// ~/.config/a2fa/<filename>
+func findHomeConfigDir(filename string) (dir string, filePath string) {
 	home, err := homedir.Dir()
 	if err != nil {
 		slog.Debug("Home directory lookup failed and cannot be used as configuration location: %v", err)
@@ -64,11 +64,6 @@ func findHomeDir(filename string) (dir string, filePath string) {
 	}
 	dir = filepath.Join(home, ".config", "a2fa")
 	filePath = findFile(dir, filename)
-	if filePath != "" {
-		return
-	}
-	dir = home
-	filePath = findFile(home, filename)
 	return
 }
 
@@ -78,8 +73,9 @@ func findHomeDir(filename string) (dir string, filePath string) {
 func MakeFilenamePath(filename string) (filePath string) {
 
 	var (
-		dir        string
-		defaultDir string
+		dir           string
+		defaultDir    string
+		homeConfigDir string
 	)
 	// <a2fa_exe_dir>/<filename>
 	if _, filePath = findExeDir(filename); filePath != "" {
@@ -105,10 +101,10 @@ func MakeFilenamePath(filename string) (filePath string) {
 		defaultDir = dir
 	}
 
-	// ~/.config/a2fa/<filename> or ~/<filename>
+	// ~/.config/a2fa/<filename>
 	// This is also the fallback location for new config
 	// (when $AppData on Windows and $XDG_CONFIG_HOME on Unix is not defined)
-	if dir, filePath = findHomeDir(filename); filePath != "" {
+	if homeConfigDir, filePath = findHomeConfigDir(filename); filePath != "" {
 		return
 	}
 
@@ -119,8 +115,10 @@ func MakeFilenamePath(filename string) (filePath string) {
 		if err := os.MkdirAll(defaultDir, os.ModePerm); err == nil {
 			return
 		}
-		if home, err := homedir.Dir(); err == nil {
-			return filepath.Join(home, filename)
+	} else if homeConfigDir != "" {
+		filePath = filepath.Join(homeConfigDir, filename)
+		if err := os.MkdirAll(homeConfigDir, os.ModePerm); err == nil {
+			return
 		}
 	}
 	return filename
