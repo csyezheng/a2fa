@@ -40,16 +40,16 @@ func (c *generateCommand) Init(cd *Commandeer) error {
 	cmd := cd.CobraCommand
 	cmd.Short = "Generate one-time password from secret key"
 	cmd.Long = "Generate one-time password from secret key"
-	cmd.Flags().BoolVar(&c.hotp, "hotp", false, "use event-based HOTP mode (default is false)")
-	cmd.Flags().BoolVar(&c.totp, "totp", true, "use use time-variant TOTP mode (default is true)")
-	cmd.Flags().BoolVarP(&c.base32, "base32", "b", true, "use base32 encoding of KEY instead of hex, (default=true)")
-	cmd.Flags().StringVarP(&c.hash, "hash", "H", "SHA1", "A cryptographic hash method H (SHA1, SHA256, SHA512, default is SHA1)")
-	cmd.Flags().IntVarP(&c.valueLength, "length", "l", 6, "A HOTP value length d (6–10, default is 6, and 6–8 is recommended)")
+	cmd.Flags().BoolVar(&c.hotp, "hotp", false, "use event-based HOTP mode")
+	cmd.Flags().BoolVar(&c.totp, "totp", true, "use use time-variant TOTP mode")
+	cmd.Flags().BoolVarP(&c.base32, "base32", "b", true, "use base32 encoding of KEY instead of hex")
+	cmd.Flags().StringVarP(&c.hash, "hash", "H", "SHA1", "A cryptographic hash method H (SHA1, SHA256, SHA512)")
+	cmd.Flags().IntVarP(&c.valueLength, "length", "l", 6, "A HOTP value length d")
 	cmd.Flags().Int64VarP(&c.counter, "counter", "c", 0, "used for HOTP, A counter C, which counts the number of iterations")
 	// epoch (T0) is the epoch as specified in seconds since the Unix epoch (e.g. if using Unix time, then T0 is 0)
-	cmd.Flags().Int64VarP(&c.epoch, "epoch", "e", 0, "used for TOTP, epoch (T0) which is the Unix time from which to start counting time steps (default is 0),")
+	cmd.Flags().Int64VarP(&c.epoch, "epoch", "e", 0, "used for TOTP, epoch (T0) which is the Unix time from which to start counting time steps")
 	// // interval (Tx) is the length of one time duration (e.g. 30 seconds).
-	cmd.Flags().Int64VarP(&c.interval, "interval", "i", 30, "used for TOTP, an interval (Tx) which will be used to calculate the value of the counter CT (default is 30 seconds).")
+	cmd.Flags().Int64VarP(&c.interval, "interval", "i", 30, "used for TOTP, an interval (Tx) which will be used to calculate the value of the counter CT")
 	return nil
 }
 
