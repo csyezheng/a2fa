@@ -39,10 +39,11 @@ a2fa means annoying two-factor authentication. Its purpose is to get rid of phon
 
 Download precompiled binary from [release](https://github.com/csyezheng/a2fa/releases/) page. 
 
-Unzip the download and cd to the extracted folder.
+Extract files from an archive and cd to the extracted folder.
 
 ```
-tar -zxf a2fa_Linux_x86_64.tar.gz
+mkdir -p a2fa_Linux_x86_64
+tar -xzf a2fa_Linux_x86_64.tar.gz -C a2fa_Linux_x86_64
 cd a2fa_Linux_x86_64
 ```
 

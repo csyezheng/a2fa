@@ -6,8 +6,6 @@ import (
 	"github.com/spf13/cobra"
 	"io"
 	"log"
-	"log/slog"
-	"strings"
 )
 
 type rootCommand struct {
@@ -47,8 +45,8 @@ func (r *rootCommand) PreRun(cd, runner *Commandeer) error {
 }
 
 func (r *rootCommand) Run(ctx context.Context, cd *Commandeer, args []string) error {
-	slog.Info("Running rootCommand", "args", strings.Join(args, " "))
-	return nil
+	listCmd := newListCommand()
+	return listCmd.Run(ctx, cd, args)
 }
 
 func (r *rootCommand) Commands() []Commander {
