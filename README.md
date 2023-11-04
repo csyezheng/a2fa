@@ -1,6 +1,6 @@
 # a2fa
 
-a2fa is a command line tool for generating and validating one-time password.
+a2fa *("annoying two-factor authentication")* is a command line tool for generating and validating one-time password.
 
 <!-- TOC -->
 
@@ -9,13 +9,14 @@ a2fa is a command line tool for generating and validating one-time password.
     + [Linux](#linux)
     + [macOS](#macOS)
     + [Windows](#windows)
+    + [Manual installation and more](#Manual-installation-and-more)
   * [Usage](#usage)
   * [Examples](#examples)
     + [Generate code](#generate-code)
     + [Add account](#add-account)
+    + [List acccount](#list-acccount)
     + [Remove accounts](#remove-accounts)
     + [Update acccount](#update-acccount)
-    + [List acccount](#list-acccount)
   * [Reporting issues](#reporting-issues)
   * [Contributing](#contributing)
   * [License](#license)
@@ -29,7 +30,7 @@ a2fa means annoying two-factor authentication. Its purpose is to get rid of phon
 **Description**:
 
 * An easy-to-use substitute for 2FA apps like TOTP Google authenticator.
-* Supports the OATH algorithms, such TOTP and HOTP.
+* Supports the OATH algorithms, such as TOTP and HOTP.
 * No need for network connection.
 * No need for phone.
 
@@ -37,45 +38,31 @@ a2fa means annoying two-factor authentication. Its purpose is to get rid of phon
 
 ### Linux
 
-Download precompiled binary from [release](https://github.com/csyezheng/a2fa/releases/) page. 
-
-Extract files from an archive and cd to the extracted folder.
+One-liner bash script to install a2fa
 
 ```
-mkdir -p a2fa_Linux_x86_64
-tar -xzf a2fa_Linux_x86_64.tar.gz -C a2fa_Linux_x86_64
-cd a2fa_Linux_x86_64
-```
-
-Copy binary file
-
-```
-sudo cp a2fa /usr/bin/
-sudo chown root:root /usr/bin/a2fa
-sudo chmod 755 /usr/bin/a2fa
+sudo -v ; curl https://raw.githubusercontent.com/csyezheng/a2fa/main/scripts/install.sh | sudo bash
 ```
 
 ### macOS
 
-Download precompiled binary from [release](https://github.com/csyezheng/a2fa/releases/) page. 
-
-Unzip the download and cd to the extracted folder.
+One-liner bash script to install a2fa
 
 ```
-tar -zxf a2fa_Darwin_x86_64.tar.gz
-cd a2fa_Darwin_x86_64
-```
-
-Move a2fa to your $PATH.
-
-```
-sudo mkdir -p /usr/local/bin
-sudo mv a2fa  /usr/local/bin/
+sudo -v ; curl https://raw.githubusercontent.com/csyezheng/a2fa/main/scripts/install.sh | sudo bash
 ```
 
 ### Windows
 
-Download precompiled binary from [release](https://github.com/csyezheng/a2fa/releases/) page. Open this file in the Explorer and extract `a2fa.exe`.  a2fa is a portable executable so you can place it wherever is convenient. Open a CMD window (or powershell) and run the binary. 
+One-liner PowerShell script to install a2fa
+
+```
+Invoke-Expression "& { $(Invoke-RestMethod 'https://raw.githubusercontent.com/csyezheng/a2fa/main/scripts/install.ps1') }"
+```
+
+### Manual installation and more
+
+Please see the [installation ](docs/installation.md)
 
 ## Usage
 

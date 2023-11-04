@@ -11,9 +11,13 @@ OS="$(uname)"
 case $OS in
   Linux)
     OS='linux'
+    download_link="https://github.com/csyezheng/a2fa/releases/latest/download/a2fa_Linux_x86_64.tar.gz"
+    a2fa_archive="a2fa_Linux_x86_64.tar.gz"
     ;;
   Darwin)
     OS='osx'
+    download_link="https://github.com/csyezheng/a2fa/releases/latest/download/a2fa_Darwin_x86_64.tar.gz"
+    a2fa_archive="a2fa_Darwin_x86_64.tar.gz"
     binTgtDir=/usr/local/bin
     ;;
   *)
@@ -33,18 +37,24 @@ case "$OS_type" in
     ;;
 esac
 
-version=$(eval "curl https://api.github.com/repos/csyezheng/a2fa/releases/latest -s | jq .name -r")
 
-download_link="https://github.com/csyezheng/a2fa/releases/download/$version/a2fa_Linux_x86_64.tar.gz"
-a2fa_archive="a2fa_Linux_x86_64.tar.gz"
+printf "Downloading package, please wait\n"
+curl -LO "$download_link"
 
-curl -OS "$download_link"
+printf "Extracting archive...\n"
+decompressed_dir="/tmp/a2fa"
+if [ ! -d "$decompressed_dir" ]
+then
+  mkdir "$decompressed_dir"
+fi
 
-decompressed_dir="tmp_a2fa"
-mkdir "$decompressed_dir"
 tar -xzf "$a2fa_archive" --directory "$decompressed_dir"
 
+printf "Successfully extracted archive\n"
+
 cd "$decompressed_dir"
+
+printf "Starting package install...\n"
 
 case "$OS" in
   'linux')
@@ -64,5 +74,11 @@ case "$OS" in
     exit 2
 esac
 
-version=$(a2fa --version 2>>errors | head -n 1)
-printf "\n${version} has successfully installed."
+printf "Successfully installed\n"
+
+cd ..
+
+if [ -d "$decompressed_dir" ]
+then
+  rm -r "$decompressed_dir"
+fi
