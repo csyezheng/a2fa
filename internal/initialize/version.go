@@ -1,4 +1,4 @@
 package initialize
 
 // Version of a2fa
-var Version = "v0.16.0"
+var Version = "v0.16.1"

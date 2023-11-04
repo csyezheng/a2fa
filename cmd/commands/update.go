@@ -19,8 +19,7 @@ type updateCommand struct {
 	commands []Commander
 
 	// Flags
-	hotp        bool
-	totp        bool
+	mode        string
 	base32      bool
 	hash        string
 	valueLength int
@@ -45,8 +44,7 @@ func (c *updateCommand) Init(cd *Commandeer) error {
 	cmd := cd.CobraCommand
 	cmd.Short = "Add account and its secret key"
 	cmd.Long = "Add account and its secret key"
-	cmd.Flags().BoolVar(&c.hotp, "hotp", false, "use event-based HOTP mode")
-	cmd.Flags().BoolVar(&c.totp, "totp", true, "use use time-variant TOTP mode")
+	cmd.Flags().StringVarP(&c.mode, "mode", "m", "totp", "use use time-variant TOTP mode or use event-based HOTP mode")
 	cmd.Flags().BoolVarP(&c.base32, "base32", "b", true, "use base32 encoding of KEY instead of hex")
 	cmd.Flags().StringVarP(&c.hash, "hash", "H", "SHA1", "A cryptographic hash method H")
 	cmd.Flags().IntVarP(&c.valueLength, "length", "l", 6, "A HOTP value length d")
@@ -61,6 +59,9 @@ func (c *updateCommand) Init(cd *Commandeer) error {
 func (c *updateCommand) Args(ctx context.Context, cd *Commandeer, args []string) error {
 	if err := cobra.ExactArgs(2)(cd.CobraCommand, args); err != nil {
 		return err
+	}
+	if c.mode != "hotp" && c.mode != "totp" {
+		return fmt.Errorf("mode should be hotp or totp")
 	}
 	return nil
 }
@@ -101,10 +102,10 @@ func newUpdateCommand() *updateCommand {
 
 func (c *updateCommand) generateCode(secretKey string) error {
 	otp := ""
-	if c.hotp {
+	if c.mode == "hotp" {
 		hotp := oath.NewHOTP(c.base32, c.hash, c.counter, c.valueLength)
 		otp = hotp.GeneratePassCode(secretKey)
-	} else if c.totp {
+	} else if c.mode == "totp" {
 		totp := oath.NewTOTP(c.base32, c.hash, c.valueLength, c.epoch, c.interval)
 		otp = totp.GeneratePassCode(secretKey)
 	} else {
@@ -123,16 +124,10 @@ func (c *updateCommand) updateAccount(accountName string, secretKey string) erro
 		log.Fatalf("failed to connect database:%s", err.Error())
 	}
 	defer db.Close()
-	mode := ""
-	if c.totp {
-		mode = "totp"
-	} else if c.hotp {
-		mode = "hotp"
-	}
 	account := db.RetrieveFirstAccount(accountName)
 	account.Name = accountName
 	account.SecretKey = secretKey
-	account.Mode = mode
+	account.Mode = c.mode
 	account.Base32 = c.base32
 	account.Hash = c.hash
 	account.ValueLength = c.valueLength

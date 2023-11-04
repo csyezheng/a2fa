@@ -14,8 +14,7 @@ type generateCommand struct {
 	commands []Commander
 
 	// Flags
-	hotp        bool
-	totp        bool
+	mode        string
 	base32      bool
 	hash        string
 	valueLength int
@@ -40,8 +39,7 @@ func (c *generateCommand) Init(cd *Commandeer) error {
 	cmd := cd.CobraCommand
 	cmd.Short = "Generate one-time password from secret key"
 	cmd.Long = "Generate one-time password from secret key"
-	cmd.Flags().BoolVar(&c.hotp, "hotp", false, "use event-based HOTP mode")
-	cmd.Flags().BoolVar(&c.totp, "totp", true, "use use time-variant TOTP mode")
+	cmd.Flags().StringVarP(&c.mode, "mode", "m", "totp", "use use time-variant TOTP mode or use event-based HOTP mode")
 	cmd.Flags().BoolVarP(&c.base32, "base32", "b", true, "use base32 encoding of KEY instead of hex")
 	cmd.Flags().StringVarP(&c.hash, "hash", "H", "SHA1", "A cryptographic hash method H (SHA1, SHA256, SHA512)")
 	cmd.Flags().IntVarP(&c.valueLength, "length", "l", 6, "A HOTP value length d")
@@ -57,6 +55,9 @@ func (c *generateCommand) Args(ctx context.Context, cd *Commandeer, args []strin
 	if err := cobra.ExactArgs(1)(cd.CobraCommand, args); err != nil {
 		return err
 	}
+	if c.mode != "hotp" && c.mode != "totp" {
+		return fmt.Errorf("mode should be hotp or totp")
+	}
 	return nil
 }
 
@@ -71,10 +72,10 @@ func (c *generateCommand) Run(ctx context.Context, cd *Commandeer, args []string
 	}
 	secretKey := args[0]
 	otp := ""
-	if c.hotp {
+	if c.mode == "hotp" {
 		hotp := oath.NewHOTP(c.base32, c.hash, c.counter, c.valueLength)
 		otp = hotp.GeneratePassCode(secretKey)
-	} else if c.totp {
+	} else if c.mode == "totp" {
 		totp := oath.NewTOTP(c.base32, c.hash, c.valueLength, c.epoch, c.interval)
 		otp = totp.GeneratePassCode(secretKey)
 	} else {
