@@ -10,7 +10,6 @@ import (
 	"encoding/hex"
 	"fmt"
 	"math"
-	"strconv"
 	"strings"
 )
 
@@ -73,8 +72,9 @@ func (t *HOTP) GeneratePassCode(secretKey string) (code string, err error) {
 
 	offset := sum[len(sum)-1] & 0xf
 	binaryCode := binary.BigEndian.Uint32(sum[offset:])
+	verificationCode := int64(binaryCode) & 0x7FFFFFFF
+	truncatedCode := verificationCode % int64(math.Pow10(t.valueLength))
+	code = fmt.Sprintf(fmt.Sprintf("%%0%dd", t.valueLength), truncatedCode)
 
-	codeNum := int64(binaryCode) & 0x7FFFFFFF
-
-	return strconv.FormatInt(codeNum%(int64(math.Pow10(t.valueLength))), 10), err
+	return code, err
 }
