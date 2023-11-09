@@ -5,8 +5,9 @@ import (
 	"fmt"
 	"github.com/csyezheng/a2fa/internal/database"
 	"github.com/csyezheng/a2fa/internal/initialize"
+	"github.com/csyezheng/a2fa/internal/models"
 	"log"
-	"log/slog"
+	"sync"
 )
 
 type listCommand struct {
@@ -75,11 +76,22 @@ func (c *listCommand) listAccounts(names []string) error {
 		return err
 	}
 	if len(accounts) == 0 {
-		slog.Info("no accounts found!")
+		fmt.Println("no accounts found!")
 	} else {
-		for i, account := range accounts {
-			fmt.Printf("%d %s %s\n", i, account.Name, account.OTP())
+		var wg sync.WaitGroup
+		for _, account := range accounts {
+			wg.Add(1)
+			go func(account models.Account) {
+				defer wg.Done()
+				code, err := account.OTP()
+				if err != nil {
+					fmt.Printf("%s generate code error%s\n", account.Name, err)
+				} else {
+					fmt.Printf("%s %s\n", account.Name, code)
+				}
+			}(account)
 		}
+		wg.Wait()
 	}
 	return nil
 }

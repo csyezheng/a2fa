@@ -9,7 +9,6 @@ import (
 	"github.com/csyezheng/a2fa/oath"
 	"github.com/spf13/cobra"
 	"log"
-	"log/slog"
 )
 
 type addCommand struct {
@@ -72,21 +71,23 @@ func (c *addCommand) PreRun(cd, runner *Commandeer) error {
 	return nil
 }
 
-func (c *addCommand) Run(ctx context.Context, cd *Commandeer, args []string) error {
+func (c *addCommand) Run(ctx context.Context, cd *Commandeer, args []string) (err error) {
 	initialize.Init()
-	if err := cobra.ExactArgs(2)(cd.CobraCommand, args); err != nil {
-		return err
+	if err = cobra.ExactArgs(2)(cd.CobraCommand, args); err != nil {
+		return
 	}
 	account := args[0]
 	secretKey := args[1]
-	if err := c.generateCode(secretKey); err != nil {
+	if _, err = c.generateCode(secretKey); err != nil {
 		log.Fatal(err)
 	}
-	if err := c.saveAccount(account, secretKey); err != nil {
+	if err = c.saveAccount(account, secretKey); err != nil {
 		log.Fatal(err)
 	}
-	slog.Info("account added successfully")
-	return nil
+	if err == nil {
+		fmt.Println("account added successfully")
+	}
+	return err
 }
 
 func (c *addCommand) Commands() []Commander {
@@ -101,19 +102,20 @@ func newAddCommand() *addCommand {
 	return addCmd
 }
 
-func (c *addCommand) generateCode(secretKey string) error {
-	otp := ""
+func (c *addCommand) generateCode(secretKey string) (code string, err error) {
 	if c.mode == "hotp" {
 		hotp := oath.NewHOTP(c.base32, c.hash, c.counter, c.valueLength)
-		otp = hotp.GeneratePassCode(secretKey)
+		code, err = hotp.GeneratePassCode(secretKey)
 	} else if c.mode == "totp" {
 		totp := oath.NewTOTP(c.base32, c.hash, c.valueLength, c.epoch, c.interval)
-		otp = totp.GeneratePassCode(secretKey)
+		code, err = totp.GeneratePassCode(secretKey)
 	} else {
-		return fmt.Errorf("mode should be hotp or totp")
+		return code, fmt.Errorf("mode should be hotp or totp")
 	}
-	fmt.Println("Code: " + otp)
-	return nil
+	if err == nil {
+		fmt.Println("Code:", code)
+	}
+	return
 }
 
 func (c *addCommand) saveAccount(accountName string, secretKey string) error {

@@ -1,8 +1,8 @@
 package models
 
 import (
+	"fmt"
 	"github.com/csyezheng/a2fa/oath"
-	"log/slog"
 )
 
 type Account struct {
@@ -18,16 +18,15 @@ type Account struct {
 }
 
 // otp generate one-time password code
-func (a Account) OTP() string {
-	code := ""
+func (a Account) OTP() (code string, err error) {
 	if a.Mode == "hotp" {
 		hotp := oath.NewHOTP(a.Base32, a.Hash, a.Counter, a.ValueLength)
-		code = hotp.GeneratePassCode(a.SecretKey)
+		code, err = hotp.GeneratePassCode(a.SecretKey)
 	} else if a.Mode == "totp" {
 		totp := oath.NewTOTP(a.Base32, a.Hash, a.ValueLength, a.Epoch, a.Interval)
-		code = totp.GeneratePassCode(a.SecretKey)
+		code, err = totp.GeneratePassCode(a.SecretKey)
 	} else {
-		slog.Error("mode should be hotp or totp")
+		return code, fmt.Errorf("mode should be hotp or totp")
 	}
-	return code
+	return
 }

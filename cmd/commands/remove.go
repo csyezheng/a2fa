@@ -2,11 +2,11 @@ package commands
 
 import (
 	"context"
+	"fmt"
 	"github.com/csyezheng/a2fa/internal/database"
 	"github.com/csyezheng/a2fa/internal/initialize"
 	"github.com/spf13/cobra"
 	"log"
-	"log/slog"
 )
 
 type removeCommand struct {
@@ -52,7 +52,7 @@ func (c *removeCommand) Run(ctx context.Context, cd *Commandeer, args []string) 
 	if err := c.removeAccounts(args); err != nil {
 		log.Fatal(err)
 	}
-	slog.Info("accounts deleted successfully")
+	fmt.Println("accounts deleted successfully")
 	return nil
 }
 

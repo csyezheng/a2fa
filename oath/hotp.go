@@ -8,8 +8,10 @@ import (
 	"encoding/base32"
 	"encoding/binary"
 	"encoding/hex"
+	"fmt"
 	"math"
 	"strconv"
+	"strings"
 )
 
 type HOTP struct {
@@ -28,12 +30,23 @@ func NewHOTP(base32 bool, hash string, counter int64, length int) *HOTP {
 	}
 }
 
-func (t *HOTP) GeneratePassCode(secretKey string) string {
+func (t *HOTP) GeneratePassCode(secretKey string) (code string, err error) {
 	var secret []byte
 	if t.base32 {
-		secret, _ = base32.StdEncoding.DecodeString(secretKey)
+		// remove spaces and convert to uppercase
+		secretKey = strings.Join(strings.Fields(secretKey), "")
+		secretKey = strings.ToUpper(secretKey)
+		secret, err = base32.StdEncoding.DecodeString(secretKey)
+		if err != nil {
+			return "", fmt.Errorf("base32 decoding failed: Base32-encoded secret key is invalid")
+		}
 	} else {
-		secret, _ = hex.DecodeString(secretKey)
+		// remove spaces, hexadecimal is not case-sensitive
+		secretKey = strings.Join(strings.Fields(secretKey), "")
+		secret, err = hex.DecodeString(secretKey)
+		if err != nil {
+			return "", fmt.Errorf("hex decoding failed: hex-encoded secret key is invalid")
+		}
 	}
 
 	var sum []byte
@@ -55,7 +68,7 @@ func (t *HOTP) GeneratePassCode(secretKey string) string {
 		sum = mac.Sum(nil)
 
 	default:
-		panic("invalid hash algorithm")
+		return "", fmt.Errorf("invalid hash algorithm. valid hash algorithms include values SHA1, SHA256, or SHA512")
 	}
 
 	offset := sum[len(sum)-1] & 0xf
@@ -63,5 +76,5 @@ func (t *HOTP) GeneratePassCode(secretKey string) string {
 
 	codeNum := int64(binaryCode) & 0x7FFFFFFF
 
-	return strconv.FormatInt(codeNum%(int64(math.Pow10(t.valueLength))), 10)
+	return strconv.FormatInt(codeNum%(int64(math.Pow10(t.valueLength))), 10), err
 }

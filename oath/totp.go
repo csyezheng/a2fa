@@ -31,7 +31,7 @@ func (t *TOTP) counter() int64 {
 	return delta / t.interval
 }
 
-func (t *TOTP) GeneratePassCode(secretKey string) string {
+func (t *TOTP) GeneratePassCode(secretKey string) (string, error) {
 	hotp := NewHOTP(t.base32, t.hashMethod, t.counter(), t.valueLength)
 	return hotp.GeneratePassCode(secretKey)
 }

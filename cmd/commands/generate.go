@@ -66,7 +66,7 @@ func (c *generateCommand) PreRun(cd, runner *Commandeer) error {
 	return nil
 }
 
-func (c *generateCommand) Run(ctx context.Context, cd *Commandeer, args []string) error {
+func (c *generateCommand) Run(ctx context.Context, cd *Commandeer, args []string) (err error) {
 	if err := cobra.ExactArgs(1)(cd.CobraCommand, args); err != nil {
 		return err
 	}
@@ -74,16 +74,19 @@ func (c *generateCommand) Run(ctx context.Context, cd *Commandeer, args []string
 	otp := ""
 	if c.mode == "hotp" {
 		hotp := oath.NewHOTP(c.base32, c.hash, c.counter, c.valueLength)
-		otp = hotp.GeneratePassCode(secretKey)
+		otp, err = hotp.GeneratePassCode(secretKey)
 	} else if c.mode == "totp" {
 		totp := oath.NewTOTP(c.base32, c.hash, c.valueLength, c.epoch, c.interval)
-		otp = totp.GeneratePassCode(secretKey)
+		otp, err = totp.GeneratePassCode(secretKey)
 	} else {
-		return fmt.Errorf("mode should be hotp or totp")
+		err = fmt.Errorf("mode should be hotp or totp")
 	}
-
-	fmt.Println("Code: " + otp)
-	return nil
+	if err != nil {
+		fmt.Printf("%s\n", err)
+	} else {
+		fmt.Println("Code:", otp)
+	}
+	return
 }
 
 func (c *generateCommand) Commands() []Commander {
