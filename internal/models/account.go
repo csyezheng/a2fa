@@ -6,8 +6,10 @@ import (
 )
 
 type Account struct {
-	Name        string `json:"name" gorm:"primaryKey"`
-	SecretKey   string `json:"secretkey" binding:"required"`
+	ID          uint   `json:"id" gorm:"primaryKey"`
+	AccountName string `json:"accountName" binding:"required"`
+	Username    string `json:"username"`
+	SecretKey   string `json:"secretKey" binding:"required"`
 	Mode        string `json:"mode"`
 	Base32      bool   `json:"base32"`
 	Hash        string `json:"hash"`

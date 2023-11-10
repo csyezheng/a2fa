@@ -85,9 +85,9 @@ func (c *listCommand) listAccounts(names []string) error {
 				defer wg.Done()
 				code, err := account.OTP()
 				if err != nil {
-					fmt.Printf("%s generate code error%s\n", account.Name, err)
+					log.Printf("%s %s generate code error%s\n", account.AccountName, account.Username, err)
 				} else {
-					fmt.Printf("%s %s\n", account.Name, code)
+					log.Printf("%s %s %s\n", account.AccountName, account.Username, code)
 				}
 			}(account)
 		}

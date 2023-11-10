@@ -85,9 +85,9 @@ Available Commands:
 ```
 a2fa generate [flags] <secret key>
 a2fa add [flags] <account name> <secret key>
-a2fa remove [flags] <account name> <account name>...
+a2fa remove <account name> [user name]
 a2fa update [flags] <account name> <secret key>
-a2fa list [flags] [account name] [account name]...
+a2fa list [account name]
 ```
 
 Commonly used flags
@@ -110,96 +110,47 @@ Flags:
 ### Generate code
 
 ```
-a2fa generate [flags] <secret key>
-```
-
-**Examples**:
-
-```
 a2fa generate ADOO3MCCCVO5AVD6
 ```
-
-Output: Code: 488821
-
-**Show flags and usage**:
-
-````
-a2fa generate -h
-````
 
 ### Add account
 
 ```
-a2fa add [flags] <account name> <secret key>
+a2fa add AccountName ADOO3MCCCVO5AVD6
 ```
 
-**Examples**:
-
 ```
-a2fa add GitHub ADOO3MCCCVO5AVD6
-```
-
-Output: account added successfully
-
-**Show flags and usage**:
-
-```
-a2fa add -h
+a2fa add AccountName:username ADOO3MCCCVO5AVD6
 ```
 
 ### List acccount
 
 ```shell
-a2fa list [flags] [account name] [account name]...
+a2fa list 
 ```
 
-**Examples**:
-
 ```
-a2fa list
-```
-
-Output:
-
-```
-0. GitHUb 414033
-1. Google 337590
-2. Microoft 54936
-3. Apple 70362
+a2fa list AccountName
 ```
 
 ### Remove accounts
 
 ```
-a2fa remove [flags] <account name> <account name>...
+a2fa remove AccountName
 ```
 
-**Examples**:
-
 ```
-a2fa remove GitHub
+a2fa remove AccountName username
 ```
-
-Output: accounts deleted successfully
 
 ### Update acccount
 
 ```
-a2fa update [flags] <account name> <secret key>
+a2fa update AccountName 5BRSSSBJUWBQBOXE
 ```
 
-**Examples**:
-
 ```
-a2fa update GitHub 5BRSSSBJUWBQBOXE
-```
-
-Output: account updated successfully
-
-**Show flags and usage**:
-
-```
-a2fa update -h
+a2fa update AccountName:username 5BRSSSBJUWBQBOXE
 ```
 
 ## Reporting issues

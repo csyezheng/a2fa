@@ -8,6 +8,7 @@ import (
 	"github.com/csyezheng/a2fa/oath"
 	"github.com/spf13/cobra"
 	"log"
+	"strings"
 )
 
 type updateCommand struct {
@@ -75,12 +76,17 @@ func (c *updateCommand) Run(ctx context.Context, cd *Commandeer, args []string) 
 	if err := cobra.ExactArgs(2)(cd.CobraCommand, args); err != nil {
 		return err
 	}
-	account := args[0]
+	accountName := args[0]
 	secretKey := args[1]
+	var userName string
+	if pairs := strings.SplitN(accountName, ":", 2); len(pairs) == 2 {
+		accountName = pairs[0]
+		userName = pairs[1]
+	}
 	if _, err := c.generateCode(secretKey); err != nil {
 		log.Fatal(err)
 	}
-	if err := c.updateAccount(account, secretKey); err != nil {
+	if err := c.updateAccount(accountName, userName, secretKey); err != nil {
 		log.Fatal(err)
 	}
 	fmt.Println("account updated successfully")
@@ -117,7 +123,7 @@ func (c *updateCommand) generateCode(secretKey string) (code string, err error) 
 	return
 }
 
-func (c *updateCommand) updateAccount(accountName string, secretKey string) error {
+func (c *updateCommand) updateAccount(accountName string, userName string, secretKey string) error {
 	db, err := database.LoadDatabase()
 	if err != nil {
 		return fmt.Errorf("failed to load database: %w", err)
@@ -126,8 +132,9 @@ func (c *updateCommand) updateAccount(accountName string, secretKey string) erro
 		log.Fatalf("failed to connect database:%s", err.Error())
 	}
 	defer db.Close()
-	account := db.RetrieveFirstAccount(accountName)
-	account.Name = accountName
+	account := db.RetrieveFirstAccount(accountName, userName)
+	account.AccountName = accountName
+	account.Username = userName
 	account.SecretKey = secretKey
 	account.Mode = c.mode
 	account.Base32 = c.base32

@@ -7,6 +7,7 @@ import (
 	"github.com/csyezheng/a2fa/internal/initialize"
 	"github.com/spf13/cobra"
 	"log"
+	"strings"
 )
 
 type removeCommand struct {
@@ -33,7 +34,7 @@ func (c *removeCommand) Init(cd *Commandeer) error {
 }
 
 func (c *removeCommand) Args(ctx context.Context, cd *Commandeer, args []string) error {
-	if err := cobra.MinimumNArgs(1)(cd.CobraCommand, args); err != nil {
+	if err := cobra.RangeArgs(1, 2)(cd.CobraCommand, args); err != nil {
 		return err
 	}
 	return nil
@@ -46,10 +47,17 @@ func (c *removeCommand) PreRun(cd, runner *Commandeer) error {
 
 func (c *removeCommand) Run(ctx context.Context, cd *Commandeer, args []string) error {
 	initialize.Init()
-	if err := cobra.MinimumNArgs(1)(cd.CobraCommand, args); err != nil {
-		return err
+	accountName, userName := args[0], ""
+	if len(args) == 1 {
+		if pairs := strings.SplitN(args[0], ":", 2); len(pairs) == 2 {
+			accountName = pairs[0]
+			userName = pairs[1]
+		}
+	} else {
+		accountName = args[0]
+		userName = args[1]
 	}
-	if err := c.removeAccounts(args); err != nil {
+	if err := c.removeAccount(accountName, userName); err != nil {
 		log.Fatal(err)
 	}
 	fmt.Println("accounts deleted successfully")
@@ -63,12 +71,12 @@ func (c *removeCommand) Commands() []Commander {
 func newRemoveCommand() *removeCommand {
 	removeCmd := &removeCommand{
 		name: "remove",
-		use:  "remove <account name> <account name>...",
+		use:  "remove <account name> [user name]",
 	}
 	return removeCmd
 }
 
-func (c *removeCommand) removeAccounts(names []string) error {
+func (c *removeCommand) removeAccount(accountName string, userName string) error {
 	db, err := database.LoadDatabase()
 	if err != nil {
 		log.Fatal("failed to load database: %w", err)
@@ -78,7 +86,7 @@ func (c *removeCommand) removeAccounts(names []string) error {
 	}
 	defer db.Close()
 
-	if err := db.RemoveAccounts(names); err != nil {
+	if err := db.RemoveAccount(accountName, userName); err != nil {
 		return err
 	}
 	return nil

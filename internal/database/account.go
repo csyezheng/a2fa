@@ -8,8 +8,8 @@ func (db *Database) CreateAccount(account *models.Account) error {
 	return db.db.Create(account).Error
 }
 
-func (db *Database) RetrieveFirstAccount(name string) (account models.Account) {
-	db.db.Model(models.Account{Name: name}).First(&account)
+func (db *Database) RetrieveFirstAccount(accountName string, userName string) (account models.Account) {
+	db.db.Model(models.Account{AccountName: accountName, Username: userName}).First(&account)
 	return
 }
 
@@ -18,8 +18,10 @@ func (db *Database) ListAccounts(names []string) (accounts []models.Account, err
 	return
 }
 
-func (db *Database) RemoveAccounts(names []string) error {
-	return db.db.Delete(&models.Account{}, names).Error
+func (db *Database) RemoveAccount(accountName string, userName string) error {
+	// When querying with struct, GORM will only query with non-zero fields
+	// that means if userName is "", it won’t be used to build query conditions
+	return db.db.Where(&models.Account{AccountName: accountName, Username: userName}).Delete(&models.Account{}).Error
 }
 
 func (db *Database) SaveAccount(account models.Account) error {

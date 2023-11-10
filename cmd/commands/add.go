@@ -9,6 +9,7 @@ import (
 	"github.com/csyezheng/a2fa/oath"
 	"github.com/spf13/cobra"
 	"log"
+	"strings"
 )
 
 type addCommand struct {
@@ -76,12 +77,17 @@ func (c *addCommand) Run(ctx context.Context, cd *Commandeer, args []string) (er
 	if err = cobra.ExactArgs(2)(cd.CobraCommand, args); err != nil {
 		return
 	}
-	account := args[0]
+	accountName := args[0]
 	secretKey := args[1]
+	var userName string
+	if pairs := strings.SplitN(accountName, ":", 2); len(pairs) == 2 {
+		accountName = pairs[0]
+		userName = pairs[1]
+	}
 	if _, err = c.generateCode(secretKey); err != nil {
 		log.Fatal(err)
 	}
-	if err = c.saveAccount(account, secretKey); err != nil {
+	if err = c.saveAccount(accountName, userName, secretKey); err != nil {
 		log.Fatal(err)
 	}
 	if err == nil {
@@ -118,7 +124,7 @@ func (c *addCommand) generateCode(secretKey string) (code string, err error) {
 	return
 }
 
-func (c *addCommand) saveAccount(accountName string, secretKey string) error {
+func (c *addCommand) saveAccount(accountName string, userName string, secretKey string) error {
 	db, err := database.LoadDatabase()
 	if err != nil {
 		return fmt.Errorf("failed to load database: %w", err)
@@ -128,7 +134,8 @@ func (c *addCommand) saveAccount(accountName string, secretKey string) error {
 	}
 	defer db.Close()
 	account := &models.Account{
-		Name:        accountName,
+		AccountName: accountName,
+		Username:    userName,
 		SecretKey:   secretKey,
 		Mode:        c.mode,
 		Base32:      c.base32,
