@@ -56,7 +56,7 @@ func (c *listCommand) Commands() []Commander {
 func newListCommand() *listCommand {
 	listCmd := &listCommand{
 		name: "list",
-		use:  "a2fa list [account name]",
+		use:  "list [account name]",
 	}
 	return listCmd
 }

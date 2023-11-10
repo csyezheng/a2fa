@@ -97,7 +97,7 @@ func (c *addCommand) Commands() []Commander {
 func newAddCommand() *addCommand {
 	addCmd := &addCommand{
 		name: "add",
-		use:  "a2fa add [flags] <account name> <secret key>",
+		use:  "add [flags] <account name> <secret key>",
 	}
 	return addCmd
 }

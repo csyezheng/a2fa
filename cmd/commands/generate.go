@@ -96,7 +96,7 @@ func (c *generateCommand) Commands() []Commander {
 func newGenerateCommand() *generateCommand {
 	generateCmd := &generateCommand{
 		name: "generate",
-		use:  "a2fa generate [flags] <secret key>",
+		use:  "generate [flags] <secret key>",
 	}
 	return generateCmd
 }

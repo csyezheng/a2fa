@@ -94,7 +94,7 @@ func (c *updateCommand) Commands() []Commander {
 func newUpdateCommand() *updateCommand {
 	updateCmd := &updateCommand{
 		name: "update",
-		use:  "a2fa update [flags] <account name> <secret key>",
+		use:  "update [flags] <account name> <secret key>",
 	}
 	return updateCmd
 }

@@ -97,12 +97,8 @@ func (c *Commandeer) init() error {
 }
 
 func (c *Commandeer) compile() error {
-	useCommandFlagsArgs := "[command] [flags]"
-	if len(c.commandeers) == 0 {
-		useCommandFlagsArgs = "[flags] [args]"
-	}
 	c.CobraCommand = &cobra.Command{
-		Use: fmt.Sprintf("%s %s", c.Command.Name(), useCommandFlagsArgs),
+		Use: c.Command.Use(),
 		Args: func(cmd *cobra.Command, args []string) error {
 			if err := c.Command.Args(cmd.Context(), c, args); err != nil {
 				return err
@@ -118,6 +114,7 @@ func (c *Commandeer) compile() error {
 		PreRunE: func(cmd *cobra.Command, args []string) error {
 			return c.init()
 		},
+		DisableFlagsInUseLine:      true,
 		SilenceErrors:              false,
 		SilenceUsage:               false,
 		SuggestionsMinimumDistance: 2,
@@ -138,59 +135,6 @@ func (c *Commandeer) compile() error {
 
 	return nil
 }
-
-//var (
-//	// Used for flags.
-//	cfgFile string
-//
-//	rootCmd = &cobra.Command{
-//		Use:   "a2fa",
-//		Short: "A command line tool for generating and validating OTPs",
-//		Long:  `a2fa is command line tool for generating and validating OTPs.`,
-//	}
-//)
-//
-//func Execute() error {
-//	return rootCmd.Execute()
-//}
-//
-//func initialize() {
-//	cobra.OnInitialize(initConfig)
-//
-//	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is ./configs/config.toml)")
-//
-//	viper.BindPFlag("author", rootCmd.PersistentFlags().Lookup("author"))
-//
-//	viper.SetDefault("author", "Ye Zheng <csyezheng@gmail.com>")
-//	viper.SetDefault("license", "apache")
-//
-//	rootCmd.AddCommand(newListCommand())
-//	rootCmd.AddCommand(newAddCommand())
-//	rootCmd.AddCommand(newRemoveCommand())
-//}
-//
-//func initConfig() {
-//	if cfgFile != "" {
-//		// Use config file from the flag.
-//		viper.SetConfigFile(cfgFile)
-//	} else {
-//		// Find home directory.
-//		cwd, err := os.Getwd()
-//		cfgdir := path.Join(cwd, "configs")
-//		cobra.CheckErr(err)
-//
-//		// Search config in home directory with name ".cobra" (without extension).
-//		viper.AddConfigPath(cfgdir)
-//		viper.SetConfigType("toml")
-//		viper.SetConfigName(".toml")
-//	}
-//
-//	viper.AutomaticEnv()
-//
-//	if err := viper.ReadInConfig(); err == nil {
-//		fmt.Println("Using config file:", viper.ConfigFileUsed())
-//	}
-//}
 
 func findSuggestions(cmd *cobra.Command, arg string) string {
 	if cmd.DisableSuggestions {

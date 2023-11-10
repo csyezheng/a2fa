@@ -63,7 +63,7 @@ func (c *removeCommand) Commands() []Commander {
 func newRemoveCommand() *removeCommand {
 	removeCmd := &removeCommand{
 		name: "remove",
-		use:  "a2fa remove <account name> <account name>...",
+		use:  "remove <account name> <account name>...",
 	}
 	return removeCmd
 }

@@ -49,7 +49,7 @@ func (c *versionCommand) Commands() []Commander {
 func newVersionCommand() *versionCommand {
 	versionCmd := &versionCommand{
 		name: "version",
-		use:  "a2fa version",
+		use:  "version",
 	}
 	return versionCmd
 }
