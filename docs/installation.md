@@ -9,13 +9,35 @@ a2fa is a command line tool for generating and validating one-time password. Its
 
 ## Linux installation
 
-### Script installation
+### Package Manager
 
-One-liner bash script to install a2fa
+#### Installation using Snap
 
-    sudo -v ; curl https://raw.githubusercontent.com/csyezheng/a2fa/main/scripts/install.sh | sudo bash
+```
+sudo snap install a2fa
+```
 
-### Manual installation
+#### Uninstallation
+
+```
+sudo snap remove a2fa
+```
+
+### Binary Archives
+
+#### Installation using a binary archive file
+
+```
+sudo -v ; curl https://raw.githubusercontent.com/csyezheng/a2fa/main/scripts/install.sh | sudo bash
+```
+
+#### Uninstalling binary archives
+
+```
+sudo -v ; curl https://raw.githubusercontent.com/csyezheng/a2fa/main/scripts/uninstall.sh | sudo bash
+```
+
+#### Manual installation
 
 Fetch and unpack
 
@@ -36,15 +58,43 @@ rm -r /tmp/a2fa
 rm a2fa_Linux_x86_64.tar.gz
 ```
 
+#### Manual uninstallation
+
+```
+sudo rm -rf /usr/bin/a2fa
+```
+
 ## macOS installation
 
-### Script installation
+### Package Manager
+
+#### Install using Homebrew (recommended)
+
+```
+brew install csyezheng/tap/a2fa
+```
+
+#### Uninstallation
+
+```
+brew uninstall --cask a2fa
+```
+
+### Binary Archives
+
+#### Installation using a binary archive file
 
 One-liner bash script to install a2fa
 
     sudo -v ; curl https://raw.githubusercontent.com/csyezheng/a2fa/main/scripts/install.sh | sudo bash
 
-### Manual installation
+#### Uninstalling binary archives
+
+```
+sudo -v ; curl https://raw.githubusercontent.com/csyezheng/a2fa/main/scripts/uninstall.sh | sudo bash
+```
+
+#### Manual installation
 
 Fetch and unpack
 
@@ -64,18 +114,51 @@ Remove the leftover files.
     rm -r /tmp/a2fa/a2fa 
     rm a2fa_Darwin_x86_64.tar.gz
 
+#### Manual uninstallation
+
+```
+sudo rm -rf /usr/local/bin/a2fa
+```
+
 ## Windows installation
 
-### Script installation
+### Package Manager
+
+#### Install using Winget (recommended)
+
+```
+winget install -e --id csyezheng.a2fa --source winget
+```
+
+#### Uninstallation
+
+```
+winget uninstall -e --id csyezheng.a2fa
+```
+
+### Binary Archives
+
+#### Installation using a binary archive file
 
 One-liner PowerShell script to install a2fa
 
 ```
 Invoke-Expression "& { $(Invoke-RestMethod 'https://raw.githubusercontent.com/csyezheng/a2fa/main/scripts/install.ps1') }"
 ```
-### Manual installation
+#### Uninstalling binary archives
+
+```
+Invoke-Expression "& { $(Invoke-RestMethod 'https://raw.githubusercontent.com/csyezheng/a2fa/main/scripts/uninstall.ps1') }"
+```
+
+#### Manual installation
 
 Download precompiled binary from [release](https://github.com/csyezheng/a2fa/releases/) page. Open this file in the Explorer and extract `a2fa.exe`. a2fa is a portable executable so you can place it wherever is convenient. Open a CMD window (or powershell) and run the binary.
 
+#### Manual uninstallation
+
+```
+Remove-Item -Path "$env:LOCALAPPDATA\a2fa" -Recurse -Force
+```
 
 
