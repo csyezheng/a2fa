@@ -7,6 +7,7 @@ import (
 	"gorm.io/driver/mysql"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
+	"gorm.io/gorm/logger"
 	"log"
 	"log/slog"
 	"sync"
@@ -27,7 +28,9 @@ func (db *Database) Open() error {
 	case "sqlite3":
 		dsn := db.backend.DSN()
 		slog.Debug(dsn)
-		rawDB, err = gorm.Open(sqlite.Open(dsn), &gorm.Config{})
+		rawDB, err = gorm.Open(sqlite.Open(dsn), &gorm.Config{
+			Logger: logger.Default.LogMode(logger.Error),
+		})
 		sqlDB, _ := rawDB.DB()
 		sqlDB.SetMaxOpenConns(1)
 	case "mysql":

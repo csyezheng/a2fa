@@ -13,8 +13,8 @@ func (db *Database) RetrieveFirstAccount(accountName string, userName string) (a
 	return
 }
 
-func (db *Database) ListAccounts(names []string) (accounts []models.Account, err error) {
-	db.db.Find(&accounts, names)
+func (db *Database) ListAccounts(accountName string, userName string) (accounts []models.Account, err error) {
+	db.db.Where(&models.Account{AccountName: accountName, Username: userName}).Find(&accounts)
 	return
 }
 

@@ -6,6 +6,7 @@ import (
 	"github.com/csyezheng/a2fa/internal/database"
 	"github.com/csyezheng/a2fa/internal/initialize"
 	"github.com/csyezheng/a2fa/internal/models"
+	"github.com/spf13/cobra"
 	"log"
 	"sync"
 )
@@ -33,6 +34,9 @@ func (c *listCommand) Init(cd *Commandeer) error {
 }
 
 func (c *listCommand) Args(ctx context.Context, cd *Commandeer, args []string) error {
+	if err := cobra.RangeArgs(0, 2)(cd.CobraCommand, args); err != nil {
+		return err
+	}
 	return nil
 }
 
@@ -43,7 +47,19 @@ func (c *listCommand) PreRun(cd, runner *Commandeer) error {
 
 func (c *listCommand) Run(ctx context.Context, cd *Commandeer, args []string) error {
 	initialize.Init()
-	if err := c.listAccounts(args); err != nil {
+	var accountName, userName string
+	if len(args) == 1 {
+		if pairs := strings.SplitN(args[0], ":", 2); len(pairs) == 2 {
+			accountName = pairs[0]
+			userName = pairs[1]
+		} else {
+			accountName = args[0]
+		}
+	} else if len(args) == 2 {
+		accountName = args[0]
+		userName = args[1]
+	}
+	if err := c.listAccounts(accountName, userName); err != nil {
 		log.Fatal(err)
 	}
 	return nil
@@ -61,7 +77,7 @@ func newListCommand() *listCommand {
 	return listCmd
 }
 
-func (c *listCommand) listAccounts(names []string) error {
+func (c *listCommand) listAccounts(accountName string, userName string) error {
 	db, err := database.LoadDatabase()
 	if err != nil {
 		log.Fatal("failed to load database: %w", err)
@@ -71,7 +87,7 @@ func (c *listCommand) listAccounts(names []string) error {
 	}
 	defer db.Close()
 
-	accounts, err := db.ListAccounts(names)
+	accounts, err := db.ListAccounts(accountName, userName)
 	if err != nil {
 		return err
 	}
