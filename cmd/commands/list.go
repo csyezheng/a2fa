@@ -8,8 +8,18 @@ import (
 	"github.com/csyezheng/a2fa/internal/models"
 	"github.com/spf13/cobra"
 	"log"
+	"os"
+	"sort"
+	"strings"
 	"sync"
+	"text/tabwriter"
 )
+
+type otpView struct {
+	accountName string
+	userName    string
+	code        string
+}
 
 type listCommand struct {
 	r        *rootCommand
@@ -91,6 +101,7 @@ func (c *listCommand) listAccounts(accountName string, userName string) error {
 	if err != nil {
 		return err
 	}
+	var result []otpView
 	if len(accounts) == 0 {
 		fmt.Println("no accounts found!")
 	} else {
@@ -103,11 +114,27 @@ func (c *listCommand) listAccounts(accountName string, userName string) error {
 				if err != nil {
 					log.Printf("%s %s generate code error%s\n", account.AccountName, account.Username, err)
 				} else {
-					log.Printf("%s %s %s\n", account.AccountName, account.Username, code)
+					result = append(result, otpView{
+						accountName: account.AccountName,
+						userName:    account.Username,
+						code:        code,
+					})
 				}
 			}(account)
 		}
 		wg.Wait()
+		sort.Slice(result, func(i, j int) bool {
+			return result[i].accountName < result[j].accountName
+		})
+		writer := tabwriter.NewWriter(os.Stdout, 8, 8, 1, '\t', 0)
+		fmt.Fprintf(writer, "%s\t%s\t%s\t%s\n", "", "Account name", "User name", "Code")
+		for i, item := range result {
+			_, err := fmt.Fprintf(writer, "%d\t%s\t%s\t%s\n", i, item.accountName, item.userName, item.code)
+			if err != nil {
+				log.Printf(err.Error())
+			}
+		}
+		writer.Flush()
 	}
 	return nil
 }
