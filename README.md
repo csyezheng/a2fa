@@ -97,60 +97,95 @@ Flags:
   -b, --base32         use base32 encoding of KEY instead of hex (default true)
   -c, --counter int    used for HOTP, A counter C, which counts the number of iterations
   -e, --epoch int      used for TOTP, epoch (T0) which is the Unix time from which to start counting time steps
-  -H, --hash string    A cryptographic hash method H (default "SHA1")
-  -h, --help           help for add
-      --hotp           use event-based HOTP mode
+  -H, --hash string    A cryptographic hash method H (SHA1, SHA256, SHA512) (default "SHA1")
+  -h, --help           help for generate
   -i, --interval int   used for TOTP, an interval (Tx) which will be used to calculate the value of the counter CT (default 30)
   -l, --length int     A HOTP value length d (default 6)
-      --totp           use use time-variant TOTP mode (default true)
+  -m, --mode string    use use time-variant TOTP mode or use event-based HOTP mode (default "totp")
 ```
 
 ## Examples
 
 ### Generate code
 
+Generate a **time-based** one-time password but do not save the secret key
+
 ```
 a2fa generate ADOO3MCCCVO5AVD6
 ```
 
+Generate a **counter-based** one-time password with counter 1
+
+```
+a2fa generate -m hotp -c 1 ADOO3MCCCVO5AVD6
+```
+
 ### Add account
 
-```
-a2fa add AccountName ADOO3MCCCVO5AVD6
-```
+Add an account named GitHub
 
 ```
-a2fa add AccountName:username ADOO3MCCCVO5AVD6
+a2fa add GitHub ADOO3MCCCVO5AVD6
+```
+
+Add an account, the account name is GitHub, the user name is csyezheng
+
+```
+a2fa add GitHub:csyezheng ADOO3MCCCVO5AVD6
 ```
 
 ### List acccount
+
+List all accounts
 
 ```shell
 a2fa list 
 ```
 
+List all accounts named GitHub
+
 ```
-a2fa list AccountName
+a2fa list GitHub
+```
+
+List accounts whose account name is GitHub and whose username is csyezheng
+
+```
+a2fa list GitHub:csyezheng
+```
+
+List accounts whose account name is GitHub and whose username is csyezheng
+
+```
+a2fa list GitHub csyezheng
 ```
 
 ### Remove accounts
 
-```
-a2fa remove AccountName
-```
+Remove all accounts named GitHub
 
 ```
-a2fa remove AccountName username
+a2fa remove GitHub
+```
+
+Delete accounts  whose account name is GitHub and whose username is csyezheng
+
+```
+a2fa remove GitHub csyezheng
 ```
 
 ### Update acccount
 
-```
-a2fa update AccountName 5BRSSSBJUWBQBOXE
-```
+Update the secret key of accounts which account name is GitHub
 
 ```
-a2fa update AccountName:username 5BRSSSBJUWBQBOXE
+a2fa update GitHub 5BRSSSBJUWBQBOXE
+```
+
+Update the secret key of accounts which account name is GitHub and the username is csyezheng
+
+```
+a2fa update GitHub:csyezheng 5BRSSSBJUWBQBOXE
 ```
 
 ## Reporting issues
