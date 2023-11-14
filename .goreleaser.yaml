@@ -48,3 +48,49 @@ changelog:
     exclude:
       - "^docs:"
       - "^test:"
+
+brews:
+  - 
+    name: a2fa
+    folder: Formula
+    install: bin.install "a2fa"
+    repository:
+      owner: csyezheng
+      name: homebrew-tap
+      token: "{{ .Env.GITHUB_TOKEN }}"
+
+    commit_author:
+      name: Ye Zheng
+      email: csyezheng@gmail.com
+
+    commit_msg_template: "Brew formula update for {{ .ProjectName }} version {{ .Tag }}"
+
+    homepage: https://github.com/csyezheng/a2fa
+
+    license: Apache 2.0
+
+    description: A command line tool for generating and validating one-time password
+
+nfpms:
+  -
+    id: a2fa
+    package_name: a2fa
+    file_name_template: "{{ .PackageName }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}"
+      
+    homepage: https://github.com/csyezheng/a2fa
+    vendor: csyezheng
+    maintainer: Ye Zheng <csyezheng@gmail.com>
+    description: A command line tool for generating and validating one-time password
+    license: Apache 2.0
+
+    formats:
+      - deb
+      - rpm
+      
+    release: 1
+    section: utils
+    priority: optional
+    bindir: /usr/bin
+    
+    rpm:
+      compression: lzma
