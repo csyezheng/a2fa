@@ -11,16 +11,22 @@ a2fa is a command line tool for generating and validating one-time password. Its
 
 ### Package Manager
 
-#### Installation using Snap
+#### Archlinux
 
 ```
-sudo snap install a2fa
+paru -S a2fa
 ```
 
-#### Uninstallation
+```
+yay -S a2fa
+```
+
+#### Debian-based Linux
 
 ```
-sudo snap remove a2fa
+echo 'deb [trusted=yes] https://apt.fury.io/csyezheng/ /' | sudo tee /etc/apt/sources.list.d/fury.list
+sudo apt update
+sudo apt install a2fa
 ```
 
 ### Binary Archives
@@ -77,7 +83,7 @@ brew install csyezheng/tap/a2fa
 #### Uninstallation
 
 ```
-brew uninstall --cask a2fa
+brew uninstall a2fa
 ```
 
 ### Binary Archives
@@ -160,5 +166,4 @@ Download precompiled binary from [release](https://github.com/csyezheng/a2fa/rel
 ```
 Remove-Item -Path "$env:LOCALAPPDATA\a2fa" -Recurse -Force
 ```
-
 

@@ -5,11 +5,11 @@ a2fa *("annoying two-factor authentication")* is a command line tool for generat
 <!-- TOC -->
 
   * [Introduction](#introduction)
-  * [Installation instructions](#installation-instructions)
-    + [Linux](#linux)
+  * [Installation](#installation)
     + [macOS](#macOS)
+    + [Linux](#linux)
     + [Windows](#windows)
-    + [Manual installation and more](#Manual-installation-and-more)
+    + [Alternate ways](#Alternate-ways)
   * [Usage](#usage)
   * [Examples](#examples)
     + [Generate code](#generate-code)
@@ -34,33 +34,41 @@ a2fa means annoying two-factor authentication. Its purpose is to get rid of phon
 * No need for network connection.
 * No need for phone.
 
-## Installation instructions
-
-### Linux
-
-One-liner bash script to install a2fa
-
-```
-sudo -v ; curl https://raw.githubusercontent.com/csyezheng/a2fa/main/scripts/install.sh | sudo bash
-```
+## Installation
 
 ### macOS
 
-One-liner bash script to install a2fa
+```
+brew install csyezheng/tap/a2fa
+```
+
+### Linux
+
+**Archlinux**
 
 ```
-sudo -v ; curl https://raw.githubusercontent.com/csyezheng/a2fa/main/scripts/install.sh | sudo bash
+paru -S a2fa
+```
+
+```
+yay -S a2fa
+```
+
+**Debian-based Linux**
+
+```
+echo 'deb [trusted=yes] https://apt.fury.io/csyezheng/ /' | sudo tee /etc/apt/sources.list.d/fury.list
+sudo apt update
+sudo apt install a2fa
 ```
 
 ### Windows
 
-One-liner PowerShell script to install a2fa
-
 ```
-Invoke-Expression "& { $(Invoke-RestMethod 'https://raw.githubusercontent.com/csyezheng/a2fa/main/scripts/install.ps1') }"
+winget install -e --id csyezheng.a2fa
 ```
 
-### Manual installation and more
+### Alternate ways
 
 Please see the [installation ](docs/installation.md)
 
